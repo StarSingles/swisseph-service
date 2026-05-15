@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "swisseph",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-04-30",
+  "vars": {
+    "ENVIRONMENT": "production"
+  },
+  "routes": [{ "pattern": "swisseph.starsingles.app", "custom_domain": true }],
+  "assets": {
+    "directory": "../web/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "env": {
+    "staging": {
+      "name": "swisseph-staging",
+      "vars": {
+        "ENVIRONMENT": "staging"
+      },
+      "routes": [{ "pattern": "staging-api.swisseph.starsingles.app", "custom_domain": true }]
+    }
+  }
+}
