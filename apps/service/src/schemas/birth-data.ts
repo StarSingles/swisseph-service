@@ -27,3 +27,14 @@ export const PlanetPositionInput = z.object({
   body: PlanetBody,
 });
 export type PlanetPositionInput = z.infer<typeof PlanetPositionInput>;
+
+export const HouseSystem = z.enum(["P", "K", "O", "R", "C", "E", "W", "B"]).default("P");
+export type HouseSystem = z.infer<typeof HouseSystem>;
+
+export const HousesInput = z.object({
+  jd: z.number(),
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  system: HouseSystem,
+});
+export type HousesInput = z.infer<typeof HousesInput>;
