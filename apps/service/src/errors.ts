@@ -1,4 +1,5 @@
 import type { Context } from "hono";
+import type { ContentfulStatusCode } from "hono/utils/http-status";
 
 export type ErrorCode = "invalid_input" | "infeasible" | "wasm_error" | "internal";
 
@@ -6,7 +7,7 @@ export type ErrorPayload = {
   error: { code: ErrorCode; message: string; details?: unknown };
 };
 
-export function httpStatusFor(code: ErrorCode): number {
+export function httpStatusFor(code: ErrorCode): ContentfulStatusCode {
   switch (code) {
     case "invalid_input":
       return 400;
