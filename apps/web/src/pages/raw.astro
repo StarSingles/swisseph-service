@@ -1,0 +1,40 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Raw API">
+  <h1>Raw API caller</h1>
+  <p style="color:#9ca3af; margin-top:0.5rem;">For ad-hoc testing of any endpoint.</p>
+
+  <div style="display: grid; gap: 0.75rem; margin-top: 1rem; max-width: 720px;">
+    <select id="endpoint">
+      <option value="GET /api/v1/health">GET /api/v1/health</option>
+      <option value="POST /api/v1/julian-day">POST /api/v1/julian-day</option>
+      <option value="POST /api/v1/planet-position">POST /api/v1/planet-position</option>
+      <option value="POST /api/v1/houses">POST /api/v1/houses</option>
+      <option value="POST /api/v1/birth-chart">POST /api/v1/birth-chart</option>
+      <option value="POST /api/v1/aspects">POST /api/v1/aspects</option>
+    </select>
+    <textarea id="body" rows="8" placeholder='{"year":2000,"month":1,"day":1,"hour":12}'></textarea>
+    <button id="send">Send</button>
+  </div>
+
+  <pre id="response" style="margin-top: 1.5rem;"></pre>
+
+  <script is:inline>
+    document.getElementById("send").addEventListener("click", async () => {
+      const ep = document.getElementById("endpoint").value;
+      const [method, path] = ep.split(" ");
+      const body = document.getElementById("body").value.trim();
+      const init = { method };
+      if (method !== "GET" && body) {
+        init.headers = { "content-type": "application/json" };
+        init.body = body;
+      }
+      const res = await fetch(path, init);
+      const text = await res.text();
+      let pretty = text;
+      try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch { /* not json */ }
+      document.getElementById("response").textContent = `HTTP ${res.status}\n\n${pretty}`;
+    });
+  </script>
+</Base>

@@ -1,0 +1,73 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Synastry">
+  <h1>Synastry</h1>
+  <p style="color: #9ca3af; margin-top: 0.5rem;">Two charts, one aspect grid.</p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+    <fieldset>
+      <legend>Person A</legend>
+      <form id="formA" style="display: grid; gap: 0.5rem;">
+        <input name="date" type="date" value="1990-01-01" required />
+        <input name="time" type="time" value="12:00" />
+        <input name="latitude" type="number" step="0.0001" value="47.3769" required />
+        <input name="longitude" type="number" step="0.0001" value="8.5417" required />
+      </form>
+    </fieldset>
+    <fieldset>
+      <legend>Person B</legend>
+      <form id="formB" style="display: grid; gap: 0.5rem;">
+        <input name="date" type="date" value="1992-06-15" required />
+        <input name="time" type="time" value="08:30" />
+        <input name="latitude" type="number" step="0.0001" value="52.52" required />
+        <input name="longitude" type="number" step="0.0001" value="13.405" required />
+      </form>
+    </fieldset>
+  </div>
+  <button id="go" style="margin-top: 1rem;">Compute synastry</button>
+
+  <div id="result" style="margin-top: 1.5rem;"></div>
+
+  <script is:inline>
+    document.getElementById("go").addEventListener("click", async () => {
+      const dataA = formToPayload("formA");
+      const dataB = formToPayload("formB");
+      const result = document.getElementById("result");
+      result.innerHTML = "<p style='color:#9ca3af'>Computing…</p>";
+      const [chartA, chartB] = await Promise.all([
+        callChart(dataA), callChart(dataB),
+      ]);
+      const aspects = await fetch("/api/v1/aspects", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ chartA: { bodies: chartA.bodies }, chartB: { bodies: chartB.bodies } }),
+      }).then((r) => r.json());
+      result.innerHTML = renderAspects(aspects.aspects);
+    });
+
+    function formToPayload(id) {
+      const fd = new FormData(document.getElementById(id));
+      return {
+        date: fd.get("date"),
+        time: fd.get("time") || undefined,
+        latitude: Number(fd.get("latitude")),
+        longitude: Number(fd.get("longitude")),
+      };
+    }
+    function callChart(payload) {
+      return fetch("/api/v1/birth-chart", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      }).then((r) => r.json());
+    }
+    function renderAspects(aspects) {
+      if (!aspects.length) return "<p>No aspects within orb.</p>";
+      const rows = aspects.map((a) =>
+        `<tr><td>${a.bodyA}</td><td>${a.type}</td><td>${a.bodyB}</td><td>${a.orb.toFixed(2)}°</td></tr>`,
+      ).join("");
+      return `<table><thead><tr><th>A</th><th>Aspect</th><th>B</th><th>Orb</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+  </script>
+</Base>
