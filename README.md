@@ -4,14 +4,9 @@
 
 A Cloudflare Worker wrapping the [Swiss Ephemeris](https://www.astro.com/swisseph/) astronomical library, exposing a small JSON API and a test web UI.
 
-- Production: <https://swisseph.starsingles.app>
-- Staging API: <https://staging-api.swisseph.starsingles.app>
-
 ## License
 
-AGPL-3.0. Built on the Swiss Ephemeris by Astrodienst AG, used here under its AGPL option.
-
-**Commercial users must obtain a [Professional License](https://www.astro.com/swisseph/swephprice_e.htm) from Astrodienst** — calling this service over HTTPS from closed-source software is legally grey and not recommended without that license. See the design doc for the full reasoning.
+AGPL-3.0. Built on the Swiss Ephemeris by Astrodienst AG, used here under its AGPL option. If you call this service from a closed-source project, obtain a [Professional License](https://www.astro.com/swisseph/swephprice_e.htm) from Astrodienst.
 
 ## API
 

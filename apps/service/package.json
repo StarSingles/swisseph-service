@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "deploy:staging": "wrangler deploy --env staging",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json"
@@ -16,10 +15,10 @@
     "zod": "^3.25.0"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.7.0",
+    "@cloudflare/vitest-pool-workers": "^0.14.9",
     "@cloudflare/workers-types": "^4.20250101.0",
     "typescript": "^5.6.0",
-    "vitest": "^2.1.0",
+    "vitest": "^4.1.6",
     "wrangler": "^4.0.0"
   }
 }
