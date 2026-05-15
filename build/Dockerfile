@@ -10,8 +10,14 @@ RUN apt-get update && apt-get install -y \
     xz-utils \
   && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sSL -o /tmp/wasi-sdk.tar.gz \
-    "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VERSION}/wasi-sdk-${WASI_SDK_FULL}-x86_64-linux.tar.gz" \
+RUN ARCH="$(uname -m)" \
+ && case "${ARCH}" in \
+      x86_64)  WASI_ARCH=x86_64 ;; \
+      aarch64) WASI_ARCH=arm64 ;; \
+      *) echo "Unsupported arch: ${ARCH}" >&2; exit 1 ;; \
+    esac \
+ && curl -sSL -o /tmp/wasi-sdk.tar.gz \
+    "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VERSION}/wasi-sdk-${WASI_SDK_FULL}-${WASI_ARCH}-linux.tar.gz" \
  && mkdir -p /opt/wasi-sdk \
  && tar -xzf /tmp/wasi-sdk.tar.gz -C /opt/wasi-sdk --strip-components=1 \
  && rm /tmp/wasi-sdk.tar.gz
