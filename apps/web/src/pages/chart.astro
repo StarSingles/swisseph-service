@@ -1,0 +1,68 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Birth Chart">
+  <h1>Birth Chart</h1>
+  <form id="form" style="display: grid; gap: 0.75rem; max-width: 480px; margin-top: 1rem;">
+    <label>Date <input name="date" type="date" value="2000-01-01" required /></label>
+    <label>Time <input name="time" type="time" value="12:00" /></label>
+    <label>Latitude <input name="latitude" type="number" step="0.0001" value="47.3769" required /></label>
+    <label>Longitude <input name="longitude" type="number" step="0.0001" value="8.5417" required /></label>
+    <label>House system
+      <select name="system">
+        <option value="P">Placidus</option>
+        <option value="W">Whole Sign</option>
+        <option value="K">Koch</option>
+        <option value="E">Equal</option>
+      </select>
+    </label>
+    <button type="submit">Compute</button>
+  </form>
+
+  <div id="result" style="margin-top: 1.5rem;"></div>
+
+  <script is:inline>
+    const form = document.getElementById("form");
+    const result = document.getElementById("result");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const payload = {
+        date: fd.get("date"),
+        time: fd.get("time") || undefined,
+        latitude: Number(fd.get("latitude")),
+        longitude: Number(fd.get("longitude")),
+        system: fd.get("system"),
+      };
+      result.innerHTML = "<p style='color:#9ca3af'>Computing…</p>";
+      const res = await fetch("/api/v1/birth-chart", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) { result.innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>"; return; }
+      result.innerHTML = renderChart(data);
+    });
+
+    function renderChart(d) {
+      const bodies = d.bodies.map((b) => `
+        <tr>
+          <td>${b.body}</td>
+          <td>${b.sign} ${b.degreeInSign.toFixed(2)}°</td>
+          <td>${b.longitude.toFixed(4)}°</td>
+          <td>${b.retrograde ? "Rx" : ""}</td>
+        </tr>`).join("");
+      const houses = d.houses
+        ? `<h2 style="margin-top: 2rem;">Houses (${d.houses.system})</h2>
+           <table>${d.houses.cusps.map((c, i) => `<tr><td>House ${i+1}</td><td>${c.toFixed(2)}°</td></tr>`).join("")}</table>
+           <p style="margin-top:0.5rem;">Ascendant ${d.angles.ascendant.toFixed(2)}° · MC ${d.angles.midheaven.toFixed(2)}°</p>`
+        : `<p style="color:#9ca3af; margin-top:1rem;">No houses (${d.warnings.join(", ")})</p>`;
+      return `
+        <h2>Bodies</h2>
+        <table><thead><tr><th>Body</th><th>Sign</th><th>Longitude</th><th></th></tr></thead><tbody>${bodies}</tbody></table>
+        ${houses}
+      `;
+    }
+  </script>
+</Base>
