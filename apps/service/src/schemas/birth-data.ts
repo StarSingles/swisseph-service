@@ -50,3 +50,34 @@ export const BirthData = z.object({
   system: HouseSystem.default("P"),
 });
 export type BirthData = z.infer<typeof BirthData>;
+
+export const AspectType = z.enum(["conjunction", "sextile", "square", "trine", "opposition"]);
+export type AspectType = z.infer<typeof AspectType>;
+
+export const Orbs = z
+  .object({
+    conjunction: z.number().min(0).max(15).default(8),
+    sextile: z.number().min(0).max(15).default(4),
+    square: z.number().min(0).max(15).default(8),
+    trine: z.number().min(0).max(15).default(8),
+    opposition: z.number().min(0).max(15).default(8),
+  })
+  .default({});
+export type Orbs = z.infer<typeof Orbs>;
+
+const PlanetPositionSchema = z.object({
+  body: z.string(),
+  longitude: z.number(),
+  latitude: z.number(),
+  speedLongitude: z.number(),
+  sign: z.string(),
+  degreeInSign: z.number(),
+  retrograde: z.boolean(),
+});
+
+export const AspectsInput = z.object({
+  chartA: z.object({ bodies: z.array(PlanetPositionSchema) }),
+  chartB: z.object({ bodies: z.array(PlanetPositionSchema) }),
+  orbs: Orbs,
+});
+export type AspectsInput = z.infer<typeof AspectsInput>;

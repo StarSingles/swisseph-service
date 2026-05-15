@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { loadSwissEph } from "./ephemeris/wasm-loader";
+import { aspectsRoute } from "./routes/aspects";
 import { birthChartRoute } from "./routes/birth-chart";
 import { housesRoute } from "./routes/houses";
 import { julianDayRoute } from "./routes/julian-day";
@@ -39,6 +40,7 @@ app.route("/api/v1/julian-day", julianDayRoute);
 app.route("/api/v1/planet-position", planetPositionRoute);
 app.route("/api/v1/houses", housesRoute);
 app.route("/api/v1/birth-chart", birthChartRoute);
+app.route("/api/v1/aspects", aspectsRoute);
 
 // Fallback: anything not under /api/* is served by the static assets binding.
 app.all("*", async (c) => {
