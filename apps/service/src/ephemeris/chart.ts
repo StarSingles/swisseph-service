@@ -46,16 +46,17 @@ export async function computeBirthChart(input: BirthData): Promise<ComputedBirth
       const rc = exports.swe_calc_ut(jd, b.ipl, FLAGS, xx, serr);
       if (rc < 0) throw new Error(`swe_calc_ut failed for ${b.name}`);
       const f64 = new Float64Array(exports.memory.buffer, xx, 6);
-      const longitude = f64[0]!;
+      const longitude = f64[0] as number;
+      const speedLongitude = f64[3] as number;
       const { sign, degreeInSign } = longitudeToSign(longitude);
       bodies.push({
         body: b.name,
         longitude,
-        latitude: f64[1]!,
-        speedLongitude: f64[3]!,
+        latitude: f64[1] as number,
+        speedLongitude,
         sign,
         degreeInSign,
-        retrograde: f64[3]! < 0,
+        retrograde: speedLongitude < 0,
       });
     }
   } finally {
@@ -86,7 +87,7 @@ export async function computeBirthChart(input: BirthData): Promise<ComputedBirth
         const cusps = Array.from(new Float64Array(exports.memory.buffer, cuspsPtr, 13)).slice(1);
         const ascmc = new Float64Array(exports.memory.buffer, ascmcPtr, 10);
         houses = { cusps, system: input.system };
-        angles = { ascendant: ascmc[0]!, midheaven: ascmc[1]! };
+        angles = { ascendant: ascmc[0] as number, midheaven: ascmc[1] as number };
       }
     } finally {
       exports.free(cuspsPtr);

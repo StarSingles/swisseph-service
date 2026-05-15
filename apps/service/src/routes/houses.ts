@@ -32,8 +32,8 @@ housesRoute.post("/", async (c) => {
     const ascmc = new Float64Array(exports.memory.buffer, ascmcPtr, 10);
     return c.json({
       cusps,
-      ascendant: ascmc[0]!,
-      midheaven: ascmc[1]!,
+      ascendant: ascmc[0] as number,
+      midheaven: ascmc[1] as number,
       system,
     });
   } finally {

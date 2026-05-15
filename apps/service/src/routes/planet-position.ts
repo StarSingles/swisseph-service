@@ -44,9 +44,9 @@ planetPositionRoute.post("/", async (c) => {
       return jsonError(c, "wasm_error", `swe_calc_ut failed: ${msg}`);
     }
     const f64 = new Float64Array(exports.memory.buffer, xx, 6);
-    const longitude = f64[0]!;
-    const latitude = f64[1]!;
-    const speedLongitude = f64[3]!;
+    const longitude = f64[0] as number;
+    const latitude = f64[1] as number;
+    const speedLongitude = f64[3] as number;
     const { sign, degreeInSign } = longitudeToSign(longitude);
     const result: PlanetPosition = {
       body,
