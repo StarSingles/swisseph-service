@@ -1,0 +1,24 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Service health">
+  <h1>Health</h1>
+  <p id="status" style="color: #9ca3af; margin-top: 1rem;">Checking…</p>
+  <pre id="output" style="margin-top: 1rem;"></pre>
+
+  <script is:inline>
+    const status = document.getElementById("status");
+    const out = document.getElementById("output");
+    const start = performance.now();
+    fetch("/api/v1/health")
+      .then((r) => r.json())
+      .then((body) => {
+        const ms = Math.round(performance.now() - start);
+        status.textContent = body.ok && body.wasmLoaded
+          ? `OK — WASM loaded, swisseph ${body.swissephVersion}, ${ms}ms`
+          : `Degraded — ${JSON.stringify(body)}`;
+        out.textContent = JSON.stringify(body, null, 2);
+      })
+      .catch((err) => { status.textContent = "Error: " + err.message; });
+  </script>
+</Base>
