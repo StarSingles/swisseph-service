@@ -7,5 +7,8 @@ export default defineWorkersConfig({
         wrangler: { configPath: "./wrangler.jsonc" },
       },
     },
+    typecheck: {
+      tsconfig: "./tsconfig.test.json",
+    },
   },
 });
