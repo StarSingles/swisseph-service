@@ -1,0 +1,58 @@
+{
+  "name": "Johann Sebastian Bach",
+  "input": {
+    "date": "1685-03-21",
+    "time": "07:45",
+    "latitude": 51.2,
+    "longitude": 10.6,
+    "system": "P"
+  },
+  "expected": {
+    "bodies": {
+      "Sun": {
+        "longitude": 1.340146036280001,
+        "sign": "Aries"
+      },
+      "Moon": {
+        "longitude": 189.2914946699868,
+        "sign": "Libra"
+      },
+      "Mercury": {
+        "longitude": 334.959308634242,
+        "sign": "Pisces"
+      },
+      "Venus": {
+        "longitude": 335.5033327428048,
+        "sign": "Pisces"
+      },
+      "Mars": {
+        "longitude": 248.13259948065968,
+        "sign": "Sagittarius"
+      },
+      "Jupiter": {
+        "longitude": 199.70431911174325,
+        "sign": "Libra"
+      },
+      "Saturn": {
+        "longitude": 162.4664681351356,
+        "sign": "Virgo"
+      },
+      "Uranus": {
+        "longitude": 34.33070687167812,
+        "sign": "Taurus"
+      },
+      "Neptune": {
+        "longitude": 332.77186400120416,
+        "sign": "Pisces"
+      },
+      "Pluto": {
+        "longitude": 107.61830143640312,
+        "sign": "Cancer"
+      }
+    },
+    "houses": {
+      "ascendant": 67.59533114430994,
+      "midheaven": 303.9431714974872
+    }
+  }
+}

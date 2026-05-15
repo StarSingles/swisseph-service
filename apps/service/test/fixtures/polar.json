@@ -1,0 +1,54 @@
+{
+  "name": "Polar (80°N)",
+  "input": {
+    "date": "2000-01-01",
+    "time": "12:00",
+    "latitude": 80,
+    "longitude": 0,
+    "system": "P"
+  },
+  "expected": {
+    "bodies": {
+      "Sun": {
+        "longitude": 280.36891967534336,
+        "sign": "Capricorn"
+      },
+      "Moon": {
+        "longitude": 223.32377543840957,
+        "sign": "Scorpio"
+      },
+      "Mercury": {
+        "longitude": 271.8892750074874,
+        "sign": "Capricorn"
+      },
+      "Venus": {
+        "longitude": 241.5657983261687,
+        "sign": "Sagittarius"
+      },
+      "Mars": {
+        "longitude": 327.9633133185202,
+        "sign": "Aquarius"
+      },
+      "Jupiter": {
+        "longitude": 25.253030309421764,
+        "sign": "Aries"
+      },
+      "Saturn": {
+        "longitude": 40.39563895600193,
+        "sign": "Taurus"
+      },
+      "Uranus": {
+        "longitude": 314.8092231658263,
+        "sign": "Aquarius"
+      },
+      "Neptune": {
+        "longitude": 303.19298122364415,
+        "sign": "Aquarius"
+      },
+      "Pluto": {
+        "longitude": 251.45470884674097,
+        "sign": "Sagittarius"
+      }
+    }
+  }
+}

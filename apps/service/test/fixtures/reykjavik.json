@@ -1,0 +1,58 @@
+{
+  "name": "Reykjavik (summer solstice 1990)",
+  "input": {
+    "date": "1990-06-21",
+    "time": "12:00",
+    "latitude": 64.13,
+    "longitude": -21.95,
+    "system": "P"
+  },
+  "expected": {
+    "bodies": {
+      "Sun": {
+        "longitude": 89.85893352153651,
+        "sign": "Gemini"
+      },
+      "Moon": {
+        "longitude": 71.76594562534734,
+        "sign": "Gemini"
+      },
+      "Mercury": {
+        "longitude": 76.78204192357562,
+        "sign": "Gemini"
+      },
+      "Venus": {
+        "longitude": 55.84954258151265,
+        "sign": "Taurus"
+      },
+      "Mars": {
+        "longitude": 15.333334209328441,
+        "sign": "Aries"
+      },
+      "Jupiter": {
+        "longitude": 107.19885650514891,
+        "sign": "Cancer"
+      },
+      "Saturn": {
+        "longitude": 293.6630315506334,
+        "sign": "Capricorn"
+      },
+      "Uranus": {
+        "longitude": 277.9280819134948,
+        "sign": "Capricorn"
+      },
+      "Neptune": {
+        "longitude": 283.5637682289308,
+        "sign": "Capricorn"
+      },
+      "Pluto": {
+        "longitude": 225.28776708663344,
+        "sign": "Scorpio"
+      }
+    },
+    "houses": {
+      "ascendant": 167.0643805786403,
+      "midheaven": 69.16886476657287
+    }
+  }
+}

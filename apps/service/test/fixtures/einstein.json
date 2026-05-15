@@ -1,0 +1,58 @@
+{
+  "name": "Albert Einstein",
+  "input": {
+    "date": "1879-03-14",
+    "time": "11:30",
+    "latitude": 48.4,
+    "longitude": 10,
+    "system": "P"
+  },
+  "expected": {
+    "bodies": {
+      "Sun": {
+        "longitude": 353.5354053462501,
+        "sign": "Pisces"
+      },
+      "Moon": {
+        "longitude": 254.91240498561532,
+        "sign": "Sagittarius"
+      },
+      "Mercury": {
+        "longitude": 3.198098116278419,
+        "sign": "Aries"
+      },
+      "Venus": {
+        "longitude": 17.019233133420663,
+        "sign": "Aries"
+      },
+      "Mars": {
+        "longitude": 296.93445642001365,
+        "sign": "Capricorn"
+      },
+      "Jupiter": {
+        "longitude": 327.4903355162387,
+        "sign": "Aquarius"
+      },
+      "Saturn": {
+        "longitude": 4.193248475792066,
+        "sign": "Aries"
+      },
+      "Uranus": {
+        "longitude": 151.2872918241775,
+        "sign": "Virgo"
+      },
+      "Neptune": {
+        "longitude": 37.87300770223922,
+        "sign": "Taurus"
+      },
+      "Pluto": {
+        "longitude": 54.725693063562225,
+        "sign": "Taurus"
+      }
+    },
+    "houses": {
+      "ascendant": 109.6789583995826,
+      "midheaven": 353.6940312232216
+    }
+  }
+}

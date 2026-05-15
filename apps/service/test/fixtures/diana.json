@@ -1,0 +1,58 @@
+{
+  "name": "Princess Diana",
+  "input": {
+    "date": "1961-07-01",
+    "time": "19:45",
+    "latitude": 52.83,
+    "longitude": 0.5,
+    "system": "P"
+  },
+  "expected": {
+    "bodies": {
+      "Sun": {
+        "longitude": 99.70278291628615,
+        "sign": "Cancer"
+      },
+      "Moon": {
+        "longitude": 325.6500973128244,
+        "sign": "Aquarius"
+      },
+      "Mercury": {
+        "longitude": 93.18138264955064,
+        "sign": "Cancer"
+      },
+      "Venus": {
+        "longitude": 54.442493345301784,
+        "sign": "Taurus"
+      },
+      "Mars": {
+        "longitude": 151.67035695688114,
+        "sign": "Virgo"
+      },
+      "Jupiter": {
+        "longitude": 305.09273666497256,
+        "sign": "Aquarius"
+      },
+      "Saturn": {
+        "longitude": 297.81119840181105,
+        "sign": "Capricorn"
+      },
+      "Uranus": {
+        "longitude": 143.33799420571248,
+        "sign": "Leo"
+      },
+      "Neptune": {
+        "longitude": 218.63620095389547,
+        "sign": "Scorpio"
+      },
+      "Pluto": {
+        "longitude": 156.04511038605077,
+        "sign": "Virgo"
+      }
+    },
+    "houses": {
+      "ascendant": 271.37657790213257,
+      "midheaven": 218.7522489433623
+    }
+  }
+}
