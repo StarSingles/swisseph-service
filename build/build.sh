@@ -32,12 +32,19 @@ docker run --rm \
     /opt/wasi-sdk/bin/clang \
       --target=wasm32-wasi \
       --sysroot=/opt/wasi-sdk/share/wasi-sysroot \
+      -mexec-model=reactor \
       -O2 \
       -DNO_JPL_HORIZONS \
       -DNO_SWE_GLP \
       -I"${SRC_DIR}" \
-      -Wl,--export-dynamic \
-      -Wl,--no-entry \
+      -Wl,--export=swe_calc_ut \
+      -Wl,--export=swe_julday \
+      -Wl,--export=swe_houses \
+      -Wl,--export=swe_set_ephe_path \
+      -Wl,--export=swe_close \
+      -Wl,--export=swe_version \
+      -Wl,--export=malloc \
+      -Wl,--export=free \
       ${SOURCES} \
       -o "${OUT}"
 
