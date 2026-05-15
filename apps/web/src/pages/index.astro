@@ -1,0 +1,23 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Swiss Ephemeris">
+  <h1>Swiss Ephemeris</h1>
+  <p style="color: #9ca3af; margin-top: 0.5rem;">
+    A small public exploration of the Swiss Ephemeris astronomical library, running on Cloudflare Workers.
+  </p>
+
+  <h2 style="margin-top: 2rem;">Tools</h2>
+  <ul style="margin-top: 0.5rem; list-style: none; padding: 0;">
+    <li style="padding: 0.5rem 0;"><a href="/health" style="color: #c4b5fd;">/health</a> — service status</li>
+    <li style="padding: 0.5rem 0;"><a href="/chart" style="color: #c4b5fd;">/chart</a> — compute a single birth chart</li>
+    <li style="padding: 0.5rem 0;"><a href="/synastry" style="color: #c4b5fd;">/synastry</a> — compare two birth charts</li>
+    <li style="padding: 0.5rem 0;"><a href="/raw" style="color: #c4b5fd;">/raw</a> — call any endpoint directly</li>
+  </ul>
+
+  <h2 style="margin-top: 2rem;">License</h2>
+  <p style="color: #9ca3af; margin-top: 0.5rem;">
+    AGPL-3.0. Built on the Swiss Ephemeris by Astrodienst AG.
+    Commercial users must obtain a Professional License from Astrodienst.
+  </p>
+</Base>
