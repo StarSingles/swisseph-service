@@ -38,3 +38,15 @@ export const HousesInput = z.object({
   system: HouseSystem,
 });
 export type HousesInput = z.infer<typeof HousesInput>;
+
+export const BirthData = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  time: z
+    .string()
+    .regex(/^\d{2}:\d{2}(:\d{2})?$/)
+    .optional(),
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  system: HouseSystem.default("P"),
+});
+export type BirthData = z.infer<typeof BirthData>;
