@@ -1,0 +1,22 @@
+{
+  "name": "swisseph-service-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.0.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "wasm:build": "bash build/build.sh",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.12",
+    "typescript": "^5.6.0"
+  }
+}
