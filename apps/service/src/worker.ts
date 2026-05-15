@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { loadSwissEph } from "./ephemeris/wasm-loader";
 import { julianDayRoute } from "./routes/julian-day";
+import { planetPositionRoute } from "./routes/planet-position";
 
 type Env = {
   ENVIRONMENT: string;
@@ -33,6 +34,7 @@ app.get("/api/v1/health", async (c) => {
 });
 
 app.route("/api/v1/julian-day", julianDayRoute);
+app.route("/api/v1/planet-position", planetPositionRoute);
 
 // Fallback: anything not under /api/* is served by the static assets binding.
 app.all("*", async (c) => {

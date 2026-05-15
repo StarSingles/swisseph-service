@@ -44,6 +44,10 @@ function readCString(memory: WebAssembly.Memory, ptr: number): string {
  * minimum required for the module to instantiate. The Proxy fallback returns
  * a no-op for any import the WASM requests that we haven't listed explicitly.
  */
+// WASI errno constants
+const WASI_ERRNO_BADF = 8;
+const WASI_ERRNO_NOENT = 44;
+
 function makeMinimalWasiImports() {
   const noop = () => 0;
   const handlers: Record<string, (...args: unknown[]) => unknown> = {
@@ -55,8 +59,14 @@ function makeMinimalWasiImports() {
     fd_write: noop,
     fd_read: noop,
     fd_fdstat_get: noop,
-    fd_prestat_get: noop,
-    fd_prestat_dir_name: noop,
+    // Must return BADF so wasi-libc's __wasilibc_populate_preopens stops iterating
+    // instead of crashing with _Exit(70). Same for fd_prestat_dir_name.
+    fd_prestat_get: () => WASI_ERRNO_BADF,
+    fd_prestat_dir_name: () => WASI_ERRNO_BADF,
+    // Filesystem access — we have no FS. Return NOENT so fopen() returns NULL
+    // and swisseph falls back to its analytical path (Moshier) cleanly.
+    path_open: () => WASI_ERRNO_NOENT,
+    path_filestat_get: () => WASI_ERRNO_NOENT,
     environ_sizes_get: noop,
     environ_get: noop,
     clock_time_get: noop,
