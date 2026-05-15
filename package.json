@@ -13,7 +13,9 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "dev": "pnpm -r --parallel dev",
-    "build": "pnpm -r build"
+    "build": "pnpm --filter @swisseph/web build && pnpm --filter @swisseph/service build || true",
+    "deploy:staging": "pnpm wasm:build && pnpm --filter @swisseph/service deploy:staging",
+    "deploy:production": "pnpm wasm:build && pnpm --filter @swisseph/web build && pnpm --filter @swisseph/service deploy"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.12",
