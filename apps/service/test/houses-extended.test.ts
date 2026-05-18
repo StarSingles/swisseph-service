@@ -99,9 +99,35 @@ describe("POST /api/v1/houses — extended angles", () => {
     });
     const t = await trop.json<{ cusps: number[] }>();
     const s = await sid.json<{ cusps: number[] }>();
-    // First cusp diff should match the ayanamsa
-    const diff = ((((t.cusps[0] as number) - (s.cusps[0] as number)) % 360) + 360) % 360;
+    // House 6 cusp — a mid-chart cusp, distinct from the Ascendant, so this
+    // exercises the shift on cusps other than house 1.
+    const diff = ((((t.cusps[5] as number) - (s.cusps[5] as number)) % 360) + 360) % 360;
     expect(diff).toBeGreaterThan(23.7);
     expect(diff).toBeLessThan(24.0);
+  });
+
+  it("sidereal then tropical: tropical cusps not contaminated by sticky sid mode", async () => {
+    // Set sidereal mode first
+    const sid = await post("/api/v1/houses", {
+      jd: J2000,
+      latitude: NYC_LAT,
+      longitude: NYC_LON,
+      system: "P",
+      zodiac: "sidereal",
+      ayanamsa: "lahiri",
+    });
+    expect(sid.status).toBe(200);
+    // Then tropical — must NOT have ayanamsa applied to the cusps
+    const trop = await post("/api/v1/houses", {
+      jd: J2000,
+      latitude: NYC_LAT,
+      longitude: NYC_LON,
+      system: "P",
+    });
+    expect(trop.status).toBe(200);
+    const data = await trop.json<{ ascendant: number }>();
+    // Tropical ASC is ~274° at NYC J2000. Sidereal under Lahiri would be ~250°.
+    // Assert > 265° to catch a sid-mode leak through the SEFLG_SIDEREAL guard.
+    expect(data.ascendant).toBeGreaterThan(265);
   });
 });
