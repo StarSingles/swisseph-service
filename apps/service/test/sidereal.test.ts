@@ -77,6 +77,8 @@ describe("POST /api/v1/birth-chart — sidereal mode", () => {
       zodiac: "sidereal",
       ayanamsa: "lahiri",
     });
+    expect(trop.status).toBe(200);
+    expect(sid.status).toBe(200);
     const t = await trop.json<{ bodies: Array<{ longitude: number }> }>();
     const s = await sid.json<{ bodies: Array<{ longitude: number }> }>();
     const tropLon = (t.bodies[0] as { longitude: number }).longitude;

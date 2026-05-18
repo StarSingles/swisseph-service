@@ -1,3 +1,4 @@
+import type { Ayanamsa } from "../schemas/birth-data";
 import type { SwissEphExports } from "../wasm/libswephe.wasm";
 import {
   SE_SIDM_DELUCE,
@@ -7,14 +8,6 @@ import {
   SE_SIDM_LAHIRI,
   SE_SIDM_RAMAN,
 } from "./swe-constants";
-
-export type Ayanamsa =
-  | "lahiri"
-  | "fagan_bradley"
-  | "krishnamurti"
-  | "raman"
-  | "deluce"
-  | "djwhal_khul";
 
 export function ayanamsaToSidMode(name: Ayanamsa): number {
   switch (name) {

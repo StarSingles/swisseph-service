@@ -13,7 +13,7 @@ import { longitudeToSign } from "./zodiac";
 
 // Moshier (analytical) — no ephemeris files needed, accuracy ~0.1" for Sun,
 // ~1" for Moon. Required because the WASM build has no filesystem for SE1 files.
-const FLAGS = SEFLG_SPEED | SEFLG_MOSEPH;
+const BASE_FLAGS = SEFLG_SPEED | SEFLG_MOSEPH;
 
 const DEFAULT_BODIES: PlanetBody[] = [
   "Sun",
@@ -45,7 +45,7 @@ export async function computeBirthChart(input: BirthData): Promise<ComputedBirth
   const hour = hasTime ? parseHourFraction(input.time as string) : 12; // noon fallback for body positions only
   const jd = exports.swe_julday(year, month, day, hour, SE_GREG_CAL);
 
-  let flags = FLAGS;
+  let flags = BASE_FLAGS;
   if (input.zodiac === "sidereal" && input.ayanamsa) {
     // Sticky global state: set mode every sidereal call. See sidereal.ts.
     applySiderealMode(exports, ayanamsaToSidMode(input.ayanamsa));
