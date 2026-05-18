@@ -13,12 +13,37 @@ import Base from "../layouts/Base.astro";
       <option value="POST /api/v1/houses">POST /api/v1/houses</option>
       <option value="POST /api/v1/birth-chart">POST /api/v1/birth-chart</option>
       <option value="POST /api/v1/aspects">POST /api/v1/aspects</option>
+      <option value="POST /api/v1/ayanamsa">POST /api/v1/ayanamsa</option>
     </select>
     <textarea id="body" rows="8" placeholder='{"year":2000,"month":1,"day":1,"hour":12}'></textarea>
     <button id="send">Send</button>
   </div>
 
   <pre id="response" style="margin-top: 1.5rem;"></pre>
+
+  <hr style="margin-top: 2.5rem; border-color: #374151;" />
+
+  <section data-testid="ayanamsa" style="margin-top: 2rem; max-width: 480px;">
+    <h2>/api/v1/ayanamsa</h2>
+    <p style="color:#9ca3af; margin-bottom: 0.75rem;">Sidereal offset (degrees) for a given Julian Day and ayanamsa system.</p>
+    <form id="ayanamsa-form" style="display: grid; gap: 0.75rem;">
+      <label>Julian Day
+        <input name="jd" type="number" step="0.0001" value="2451545.0" required />
+      </label>
+      <label>Ayanamsa
+        <select name="ayanamsa">
+          <option value="lahiri">Lahiri</option>
+          <option value="fagan_bradley">Fagan/Bradley</option>
+          <option value="krishnamurti">Krishnamurti</option>
+          <option value="raman">Raman</option>
+          <option value="deluce">DeLuce</option>
+          <option value="djwhal_khul">Djwhal Khul</option>
+        </select>
+      </label>
+      <button type="submit">Send</button>
+    </form>
+    <pre id="ayanamsa-response" style="margin-top: 1rem;"></pre>
+  </section>
 
   <script is:inline>
     document.getElementById("send").addEventListener("click", async () => {
@@ -35,6 +60,26 @@ import Base from "../layouts/Base.astro";
       let pretty = text;
       try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch { /* not json */ }
       document.getElementById("response").textContent = `HTTP ${res.status}\n\n${pretty}`;
+    });
+
+    document.getElementById("ayanamsa-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const payload = {
+        jd: Number(fd.get("jd")),
+        ayanamsa: fd.get("ayanamsa"),
+      };
+      const pre = document.getElementById("ayanamsa-response");
+      pre.textContent = "Computing…";
+      const res = await fetch("/api/v1/ayanamsa", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const text = await res.text();
+      let pretty = text;
+      try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch { /* not json */ }
+      pre.textContent = `HTTP ${res.status}\n\n${pretty}`;
     });
   </script>
 </Base>

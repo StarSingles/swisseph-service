@@ -16,24 +16,72 @@ import Base from "../layouts/Base.astro";
         <option value="E">Equal</option>
       </select>
     </label>
+
+    <fieldset data-testid="zodiac-fieldset">
+      <legend>Zodiac</legend>
+      <label>
+        <input type="radio" name="zodiac" value="tropical" checked />
+        Tropical
+      </label>
+      <label>
+        <input type="radio" name="zodiac" value="sidereal" />
+        Sidereal
+      </label>
+      <select name="ayanamsa" data-testid="ayanamsa-select" disabled>
+        <option value="lahiri">Lahiri</option>
+        <option value="fagan_bradley">Fagan/Bradley</option>
+        <option value="krishnamurti">Krishnamurti</option>
+        <option value="raman">Raman</option>
+        <option value="deluce">DeLuce</option>
+        <option value="djwhal_khul">Djwhal Khul</option>
+      </select>
+    </fieldset>
+
+    <label data-testid="extended-bodies-toggle">
+      <input type="checkbox" name="extendedBodies" />
+      Include extended bodies (Mean Node, True Node, Lilith)
+    </label>
+
     <button type="submit">Compute</button>
   </form>
 
-  <div id="result" style="margin-top: 1.5rem;"></div>
+  <div id="result" data-testid="chart-results" style="margin-top: 1.5rem;"></div>
 
   <script is:inline>
     const form = document.getElementById("form");
     const result = document.getElementById("result");
+
+    form.addEventListener("change", (e) => {
+      if (e.target.name === "zodiac") {
+        form.ayanamsa.disabled = form.zodiac.value !== "sidereal";
+      }
+    });
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const fd = new FormData(form);
+      const zodiac = fd.get("zodiac") || "tropical";
+      const includeExt = fd.get("extendedBodies") === "on";
+
       const payload = {
         date: fd.get("date"),
         time: fd.get("time") || undefined,
         latitude: Number(fd.get("latitude")),
         longitude: Number(fd.get("longitude")),
         system: fd.get("system"),
+        zodiac,
       };
+      if (zodiac === "sidereal") {
+        payload.ayanamsa = fd.get("ayanamsa") || "lahiri";
+      }
+      if (includeExt) {
+        payload.bodies = [
+          "Sun", "Moon", "Mercury", "Venus", "Mars",
+          "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
+          "MeanNode", "TrueNode", "Lilith",
+        ];
+      }
+
       result.innerHTML = "<p style='color:#9ca3af'>Computing…</p>";
       const res = await fetch("/api/v1/birth-chart", {
         method: "POST",
