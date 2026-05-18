@@ -13,7 +13,7 @@ ayanamsaRoute.post("/", async (c) => {
   if (!parsed.success) {
     return jsonError(c, "invalid_input", "Invalid input", parsed.error.flatten());
   }
-  const { julianDay, ayanamsa } = parsed.data;
+  const { jd, ayanamsa } = parsed.data;
   const { exports } = await loadSwissEph();
 
   // Sticky global state — set mode before reading the offset (see sidereal.ts).
@@ -22,13 +22,13 @@ ayanamsaRoute.post("/", async (c) => {
   const daya = exports.malloc(8); // single f64
   const serr = exports.malloc(256);
   try {
-    const rc = exports.swe_get_ayanamsa_ex_ut(julianDay, 0, daya, serr);
+    const rc = exports.swe_get_ayanamsa_ex_ut(jd, 0, daya, serr);
     if (rc < 0) {
       const msg = readCString(exports.memory, serr);
       return jsonError(c, "wasm_error", `swe_get_ayanamsa_ex_ut failed: ${msg}`);
     }
     const offsetDegrees = new Float64Array(exports.memory.buffer, daya, 1)[0] as number;
-    return c.json({ ayanamsa, julianDay, offsetDegrees });
+    return c.json({ ayanamsa, jd, offsetDegrees });
   } finally {
     exports.free(daya);
     exports.free(serr);
