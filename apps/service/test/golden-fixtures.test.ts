@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import bach from "./fixtures/bach.json";
 import diana from "./fixtures/diana.json";
 import einstein from "./fixtures/einstein.json";
+import extendedBodiesJ2000 from "./fixtures/extended-bodies-j2000.json";
 import greenwich from "./fixtures/greenwich-2000.json";
 import polar from "./fixtures/polar.json";
 import reykjavik from "./fixtures/reykjavik.json";
@@ -79,4 +80,23 @@ describe("golden output fixtures", () => {
     expect(body.houses).toBeNull();
     expect(body.warnings.some((w) => w.includes("infeasible"))).toBe(true);
   });
+});
+
+describe("golden output fixtures — extended bodies at J2000", () => {
+  const J2000 = 2451545.0;
+  // extendedBodiesJ2000._meta contains source/tolerance metadata; iterate only body entries.
+  const bodies = Object.entries(extendedBodiesJ2000).filter(([k]) => k !== "_meta") as [
+    string,
+    { longitude: number; sign: string },
+  ][];
+
+  for (const [bodyName, expected] of bodies) {
+    it(`${bodyName} matches golden longitude at J2000`, async () => {
+      const res = await post("/api/v1/planet-position", { jd: J2000, body: bodyName });
+      expect(res.status).toBe(200);
+      const data = await res.json<{ longitude: number; sign: string }>();
+      expect(data.longitude).toBeCloseTo(expected.longitude, Math.log10(1 / LONGITUDE_TOLERANCE));
+      expect(data.sign).toBe(expected.sign);
+    });
+  }
 });

@@ -19,6 +19,11 @@ export const PlanetBody = z.enum([
   "Uranus",
   "Neptune",
   "Pluto",
+  "MeanNode",
+  "TrueNode",
+  "Lilith",
+  // Chiron deferred — requires seas_18.se1 ephemeris file (Moshier doesn't
+  // cover minor bodies). Add once R2-mounted ephemeris files are wired up.
 ]);
 export type PlanetBody = z.infer<typeof PlanetBody>;
 
@@ -48,6 +53,11 @@ export const BirthData = z.object({
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
   system: HouseSystem.default("P"),
+  /**
+   * Optional opt-in body list. Defaults to the classical 10 (Sun→Pluto)
+   * when omitted. When provided, returns exactly these bodies in order.
+   */
+  bodies: z.array(PlanetBody).optional(),
 });
 export type BirthData = z.infer<typeof BirthData>;
 

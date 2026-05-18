@@ -22,6 +22,26 @@ export const SE_MEAN_APOG = 12; // "Lilith"
 // Note: 13 (SE_OSCU_APOG) and 14 (SE_EARTH) intentionally skipped — not needed.
 export const SE_CHIRON = 15;
 
+// Canonical mapping from PlanetBody name → swe_calc_ut ipl number.
+// Shared by planet-position.ts and chart.ts to avoid duplication.
+// Import type PlanetBody from ../schemas/birth-data is intentionally avoided
+// here to keep this constants module dependency-free; callers cast as needed.
+export const BODY_TO_IPL: Record<string, number> = {
+  Sun: SE_SUN,
+  Moon: SE_MOON,
+  Mercury: SE_MERCURY,
+  Venus: SE_VENUS,
+  Mars: SE_MARS,
+  Jupiter: SE_JUPITER,
+  Saturn: SE_SATURN,
+  Uranus: SE_URANUS,
+  Neptune: SE_NEPTUNE,
+  Pluto: SE_PLUTO,
+  MeanNode: SE_MEAN_NODE,
+  TrueNode: SE_TRUE_NODE,
+  Lilith: SE_MEAN_APOG,
+};
+
 // Calculation flags — bitmask, combined with `|`.
 export const SEFLG_SPEED = 256;
 export const SEFLG_MOSEPH = 4; // Moshier — analytical, no .se1 files

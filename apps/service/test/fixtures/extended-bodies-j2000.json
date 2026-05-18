@@ -1,0 +1,21 @@
+{
+  "_meta": {
+    "source": "self-bootstrapped from WASM Moshier output",
+    "jd": 2451545.0,
+    "flags": "SEFLG_MOSEPH | SEFLG_SPEED",
+    "tolerance": 0.01,
+    "note": "Chiron deferred — requires seas_18.se1 ephemeris file not available under Moshier"
+  },
+  "MeanNode": {
+    "longitude": 125.04064605661608,
+    "sign": "Leo"
+  },
+  "TrueNode": {
+    "longitude": 123.95289541307294,
+    "sign": "Leo"
+  },
+  "Lilith": {
+    "longitude": 263.46433272358223,
+    "sign": "Sagittarius"
+  }
+}

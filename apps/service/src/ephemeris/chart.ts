@@ -1,6 +1,6 @@
 import type { BirthData, PlanetBody } from "../schemas/birth-data";
 import type { PlanetPosition } from "../schemas/responses";
-import { SE_GREG_CAL, SEFLG_MOSEPH, SEFLG_SPEED } from "./swe-constants";
+import { BODY_TO_IPL, SE_GREG_CAL, SEFLG_MOSEPH, SEFLG_SPEED } from "./swe-constants";
 import { loadSwissEph } from "./wasm-loader";
 import { longitudeToSign } from "./zodiac";
 
@@ -8,17 +8,17 @@ import { longitudeToSign } from "./zodiac";
 // ~1" for Moon. Required because the WASM build has no filesystem for SE1 files.
 const FLAGS = SEFLG_SPEED | SEFLG_MOSEPH;
 
-const BODIES: { name: PlanetBody; ipl: number }[] = [
-  { name: "Sun", ipl: 0 },
-  { name: "Moon", ipl: 1 },
-  { name: "Mercury", ipl: 2 },
-  { name: "Venus", ipl: 3 },
-  { name: "Mars", ipl: 4 },
-  { name: "Jupiter", ipl: 5 },
-  { name: "Saturn", ipl: 6 },
-  { name: "Uranus", ipl: 7 },
-  { name: "Neptune", ipl: 8 },
-  { name: "Pluto", ipl: 9 },
+const DEFAULT_BODIES: PlanetBody[] = [
+  "Sun",
+  "Moon",
+  "Mercury",
+  "Venus",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune",
+  "Pluto",
 ];
 
 export type ComputedBirthChart = {
@@ -38,19 +38,21 @@ export async function computeBirthChart(input: BirthData): Promise<ComputedBirth
   const hour = hasTime ? parseHourFraction(input.time as string) : 12; // noon fallback for body positions only
   const jd = exports.swe_julday(year, month, day, hour, SE_GREG_CAL);
 
+  const requestedBodies = input.bodies ?? DEFAULT_BODIES;
   const bodies: PlanetPosition[] = [];
   const xx = exports.malloc(6 * 8);
   const serr = exports.malloc(256);
   try {
-    for (const b of BODIES) {
-      const rc = exports.swe_calc_ut(jd, b.ipl, FLAGS, xx, serr);
-      if (rc < 0) throw new Error(`swe_calc_ut failed for ${b.name}`);
+    for (const name of requestedBodies) {
+      const ipl = BODY_TO_IPL[name] as number;
+      const rc = exports.swe_calc_ut(jd, ipl, FLAGS, xx, serr);
+      if (rc < 0) throw new Error(`swe_calc_ut failed for ${name}`);
       const f64 = new Float64Array(exports.memory.buffer, xx, 6);
       const longitude = f64[0] as number;
       const speedLongitude = f64[3] as number;
       const { sign, degreeInSign } = longitudeToSign(longitude);
       bodies.push({
-        body: b.name,
+        body: name,
         longitude,
         latitude: f64[1] as number,
         speedLongitude,
