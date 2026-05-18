@@ -5,6 +5,8 @@
  * submodule, re-grep swephexp.h and update.
  */
 
+import type { PlanetBody } from "../schemas/birth-data";
+
 // Body identifiers — used as the `ipl` argument to swe_calc_ut.
 export const SE_SUN = 0;
 export const SE_MOON = 1;
@@ -23,10 +25,10 @@ export const SE_MEAN_APOG = 12; // "Lilith"
 export const SE_CHIRON = 15;
 
 // Canonical mapping from PlanetBody name → swe_calc_ut ipl number.
-// Shared by planet-position.ts and chart.ts to avoid duplication.
-// Import type PlanetBody from ../schemas/birth-data is intentionally avoided
-// here to keep this constants module dependency-free; callers cast as needed.
-export const BODY_TO_IPL: Record<string, number> = {
+// Shared by planet-position.ts and chart.ts to avoid duplication. Typed as
+// Record<PlanetBody, number> so adding a new enum member without updating
+// this map fails at compile time.
+export const BODY_TO_IPL: Record<PlanetBody, number> = {
   Sun: SE_SUN,
   Moon: SE_MOON,
   Mercury: SE_MERCURY,

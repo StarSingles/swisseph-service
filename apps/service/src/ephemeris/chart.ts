@@ -44,7 +44,7 @@ export async function computeBirthChart(input: BirthData): Promise<ComputedBirth
   const serr = exports.malloc(256);
   try {
     for (const name of requestedBodies) {
-      const ipl = BODY_TO_IPL[name] as number;
+      const ipl = BODY_TO_IPL[name];
       const rc = exports.swe_calc_ut(jd, ipl, FLAGS, xx, serr);
       if (rc < 0) throw new Error(`swe_calc_ut failed for ${name}`);
       const f64 = new Float64Array(exports.memory.buffer, xx, 6);

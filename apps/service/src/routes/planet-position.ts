@@ -24,7 +24,7 @@ planetPositionRoute.post("/", async (c) => {
   const xx = exports.malloc(6 * 8); // 6 doubles
   const serr = exports.malloc(256);
   try {
-    const rc = exports.swe_calc_ut(jd, BODY_TO_IPL[body] as number, FLAGS, xx, serr);
+    const rc = exports.swe_calc_ut(jd, BODY_TO_IPL[body], FLAGS, xx, serr);
     if (rc < 0) {
       const msg = readCString(exports.memory, serr);
       return jsonError(c, "wasm_error", `swe_calc_ut failed: ${msg}`);
