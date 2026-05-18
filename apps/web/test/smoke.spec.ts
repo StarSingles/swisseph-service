@@ -48,27 +48,44 @@ test("chart page: extended bodies toggle adds nodes/Lilith rows", async ({ page 
   await expect(page.locator('[data-testid="chart-results"]')).toContainText("Lilith");
 });
 
-test("chart page: switching to sidereal shifts longitudes", async ({ page }) => {
+test("chart page: switching to sidereal shifts Sun longitude by Lahiri ayanamsa", async ({
+  page,
+}) => {
+  // The bodies table renders one row per body: <td>Name</td><td>Sign d°</td><td>longitude°</td><td>Rx?</td>
+  // Sun is the first row — read its longitude (3rd cell) for a precise check
+  // instead of comparing the whole results blob.
+  const sunLongitude = async () => {
+    const cell = page
+      .locator('[data-testid="chart-results"] tbody tr')
+      .first()
+      .locator("td")
+      .nth(2);
+    const text = await cell.textContent();
+    return Number((text ?? "").replace("°", "").trim());
+  };
+
   await page.goto("/chart");
   await page.fill('[name="date"]', "2000-01-01");
   await page.fill('[name="time"]', "12:00");
   await page.fill('[name="latitude"]', "47.3769");
   await page.fill('[name="longitude"]', "8.5417");
   await page.click('button[type="submit"]');
-  // Snapshot tropical results
   await expect(page.locator('[data-testid="chart-results"]')).toContainText("Sun", {
     timeout: 15_000,
   });
-  const tropText = await page.locator('[data-testid="chart-results"]').textContent();
+  const tropSunLon = await sunLongitude();
+
   await page.check('[name="zodiac"][value="sidereal"]');
-  // Ayanamsa select should now be enabled
   await expect(page.locator('[name="ayanamsa"]')).toBeEnabled();
   await page.click('button[type="submit"]');
-  await expect(page.locator('[data-testid="chart-results"]')).toContainText("Sun", {
-    timeout: 15_000,
-  });
-  const sidText = await page.locator('[data-testid="chart-results"]').textContent();
-  expect(tropText).not.toEqual(sidText);
+  // Wait for fresh render — the cell value should change
+  await expect.poll(sunLongitude, { timeout: 15_000 }).not.toEqual(tropSunLon);
+  const sidSunLon = await sunLongitude();
+
+  const diff = (((tropSunLon - sidSunLon) % 360) + 360) % 360;
+  // Lahiri ayanamsa at J2000 ≈ 23.85°. Tolerance ±0.1°.
+  expect(diff).toBeGreaterThan(23.7);
+  expect(diff).toBeLessThan(24.0);
 });
 
 test("raw page: ayanamsa endpoint returns offset", async ({ page }) => {

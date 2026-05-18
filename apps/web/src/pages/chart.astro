@@ -75,6 +75,9 @@ import Base from "../layouts/Base.astro";
         payload.ayanamsa = fd.get("ayanamsa") || "lahiri";
       }
       if (includeExt) {
+        // Keep in sync with PlanetBody enum in apps/service/src/schemas/birth-data.ts.
+        // Chiron and other minor bodies are intentionally excluded — they require
+        // .se1 ephemeris files that the WASM build cannot mount.
         payload.bodies = [
           "Sun", "Moon", "Mercury", "Venus", "Mars",
           "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
