@@ -19,6 +19,7 @@ export const SE_PLUTO = 9;
 export const SE_MEAN_NODE = 10;
 export const SE_TRUE_NODE = 11;
 export const SE_MEAN_APOG = 12; // "Lilith"
+// Note: 13 (SE_OSCU_APOG) and 14 (SE_EARTH) intentionally skipped — not needed.
 export const SE_CHIRON = 15;
 
 // Calculation flags — bitmask, combined with `|`.
@@ -32,8 +33,9 @@ export const SE_SIDM_LAHIRI = 1;
 export const SE_SIDM_DELUCE = 2;
 export const SE_SIDM_RAMAN = 3;
 export const SE_SIDM_KRISHNAMURTI = 5;
-// Upstream name: SE_SIDM_DJWHAL_KHUL (note underscore between DJWHAL and KHUL).
-// Value is 6, not 7 — the plan table had a typo; SE_SIDM_YUKTESHWAR = 7.
+// Upstream header name is SE_SIDM_DJWHAL_KHUL (with the extra underscore);
+// exported without it for symmetry with the other SIDM_* identifiers.
+// Value confirmed 6 in swephexp.h — SE_SIDM_YUKTESHWAR is the one at 7.
 export const SE_SIDM_DJWHALKHUL = 6;
 
 // Gregorian calendar flag for swe_julday.

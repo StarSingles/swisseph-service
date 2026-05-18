@@ -4,6 +4,8 @@ import { SE_GREG_CAL, SEFLG_MOSEPH, SEFLG_SPEED } from "./swe-constants";
 import { loadSwissEph } from "./wasm-loader";
 import { longitudeToSign } from "./zodiac";
 
+// Moshier (analytical) — no ephemeris files needed, accuracy ~0.1" for Sun,
+// ~1" for Moon. Required because the WASM build has no filesystem for SE1 files.
 const FLAGS = SEFLG_SPEED | SEFLG_MOSEPH;
 
 const BODIES: { name: PlanetBody; ipl: number }[] = [
