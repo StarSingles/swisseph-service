@@ -32,17 +32,18 @@ export interface SwissEphExports {
   ): number;
 
   /**
-   * swe_houses_ex(tjd_ut: f64, iflag: i32, lat: f64, lon: f64, hsys: i32,
+   * swe_houses_ex(tjd_ut: f64, iflag: i32, geolat: f64, geolon: f64, hsys: i32,
    *               cusps: ptr, ascmc: ptr) -> i32
-   * Like swe_houses but takes iflag (so SEFLG_SIDEREAL can be applied to
-   * cusp longitudes) and writes ascmc[3..7] (vertex, eq.asc, co-asc Koch,
-   * co-asc Munkasey, polar asc) in addition to ascmc[0..2].
+   * Like swe_houses but accepts iflag so callers can apply SEFLG_SIDEREAL
+   * to shift cusp longitudes. ascmc[0..7] semantics are identical to
+   * swe_houses: [0]=ASC, [1]=MC, [2]=ARMC, [3]=vertex, [4]=eq.asc,
+   * [5]=co-asc Koch, [6]=co-asc Munkasey, [7]=polar asc.
    */
   swe_houses_ex(
     tjd_ut: number,
     iflag: number,
-    lat: number,
-    lon: number,
+    geolat: number,
+    geolon: number,
     hsys: number,
     cusps: number,
     ascmc: number,
