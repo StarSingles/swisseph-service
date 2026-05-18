@@ -1,12 +1,11 @@
 import { Hono } from "hono";
+import { SEFLG_MOSEPH, SEFLG_SPEED } from "../ephemeris/swe-constants";
 import { loadSwissEph } from "../ephemeris/wasm-loader";
 import { longitudeToSign } from "../ephemeris/zodiac";
 import { jsonError } from "../errors";
 import { type PlanetBody, PlanetPositionInput } from "../schemas/birth-data";
 import type { PlanetPosition } from "../schemas/responses";
 
-const SEFLG_SPEED = 256;
-const SEFLG_MOSEPH = 4;
 // Moshier (analytical) — no ephemeris files needed, accuracy ~0.1" for Sun, ~1" for Moon.
 // Required because the WASM build has no filesystem access for SE1 ephemeris files.
 const FLAGS = SEFLG_SPEED | SEFLG_MOSEPH;

@@ -1,12 +1,10 @@
 import type { BirthData, PlanetBody } from "../schemas/birth-data";
 import type { PlanetPosition } from "../schemas/responses";
+import { SE_GREG_CAL, SEFLG_MOSEPH, SEFLG_SPEED } from "./swe-constants";
 import { loadSwissEph } from "./wasm-loader";
 import { longitudeToSign } from "./zodiac";
 
-const SEFLG_SPEED = 256;
-const SEFLG_MOSEPH = 4; // Moshier — analytical, no .se1 files required
 const FLAGS = SEFLG_SPEED | SEFLG_MOSEPH;
-const SE_GREG_CAL = 1;
 
 const BODIES: { name: PlanetBody; ipl: number }[] = [
   { name: "Sun", ipl: 0 },
