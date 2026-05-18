@@ -42,6 +42,9 @@ docker run --rm \
       -Wl,--export=swe_houses \
       -Wl,--export=swe_set_ephe_path \
       -Wl,--export=swe_close \
+      -Wl,--export=swe_houses_ex \
+      -Wl,--export=swe_set_sid_mode \
+      -Wl,--export=swe_get_ayanamsa_ex_ut \
       -Wl,--export=swe_version \
       -Wl,--export=malloc \
       -Wl,--export=free \

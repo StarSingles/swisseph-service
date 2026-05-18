@@ -31,6 +31,37 @@ export interface SwissEphExports {
     ascmc: number,
   ): number;
 
+  /**
+   * swe_houses_ex(tjd_ut: f64, iflag: i32, lat: f64, lon: f64, hsys: i32,
+   *               cusps: ptr, ascmc: ptr) -> i32
+   * Like swe_houses but takes iflag (so SEFLG_SIDEREAL can be applied to
+   * cusp longitudes) and writes ascmc[3..7] (vertex, eq.asc, co-asc Koch,
+   * co-asc Munkasey, polar asc) in addition to ascmc[0..2].
+   */
+  swe_houses_ex(
+    tjd_ut: number,
+    iflag: number,
+    lat: number,
+    lon: number,
+    hsys: number,
+    cusps: number,
+    ascmc: number,
+  ): number;
+
+  /** swe_set_sid_mode(sid_mode: i32, t0: f64, ayan_t0: f64) -> void */
+  swe_set_sid_mode(sid_mode: number, t0: number, ayan_t0: number): void;
+
+  /**
+   * swe_get_ayanamsa_ex_ut(tjd_ut: f64, iflag: i32, daya: ptr, serr: ptr) -> i32
+   * Writes ayanamsa offset (degrees) into *daya. Call swe_set_sid_mode first.
+   */
+  swe_get_ayanamsa_ex_ut(
+    tjd_ut: number,
+    iflag: number,
+    daya: number,
+    serr: number,
+  ): number;
+
   /** swe_set_ephe_path(path: ptr) -> void */
   swe_set_ephe_path(path: number): void;
 
