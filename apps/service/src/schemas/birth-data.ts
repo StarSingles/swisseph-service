@@ -57,12 +57,19 @@ export type PlanetPositionInput = z.infer<typeof PlanetPositionInput>;
 export const HouseSystem = z.enum(["P", "K", "O", "R", "C", "E", "W", "B"]).default("P");
 export type HouseSystem = z.infer<typeof HouseSystem>;
 
-export const HousesInput = z.object({
-  jd: z.number(),
-  latitude: z.number().min(-90).max(90),
-  longitude: z.number().min(-180).max(180),
-  system: HouseSystem,
-});
+export const HousesInput = z
+  .object({
+    jd: z.number(),
+    latitude: z.number().min(-90).max(90),
+    longitude: z.number().min(-180).max(180),
+    system: HouseSystem,
+    includeExtended: z.boolean().default(false),
+    ...zodiacFields,
+  })
+  .refine((v) => v.zodiac !== "sidereal" || v.ayanamsa !== undefined, {
+    message: "ayanamsa is required when zodiac is 'sidereal'",
+    path: ["ayanamsa"],
+  });
 export type HousesInput = z.infer<typeof HousesInput>;
 
 export const BirthData = z

@@ -1,5 +1,6 @@
 import type { BirthData, PlanetBody } from "../schemas/birth-data";
 import type { PlanetPosition } from "../schemas/responses";
+import { computeHouses } from "./houses";
 import { applySiderealMode, ayanamsaToSidMode } from "./sidereal";
 import {
   BODY_TO_IPL,
@@ -86,29 +87,19 @@ export async function computeBirthChart(input: BirthData): Promise<ComputedBirth
   if (!hasTime) {
     warnings.push("birth time not provided — ascendant and houses omitted");
   } else {
-    const cuspsPtr = exports.malloc(13 * 8);
-    const ascmcPtr = exports.malloc(10 * 8);
-    try {
-      // TODO(task-7): cusps are still tropical here; switch to swe_houses_ex in Task 7.
-      const rc = exports.swe_houses(
-        jd,
-        input.latitude,
-        input.longitude,
-        input.system.charCodeAt(0),
-        cuspsPtr,
-        ascmcPtr,
-      );
-      if (rc < 0) {
-        warnings.push(`house system ${input.system} infeasible at this latitude — houses omitted`);
-      } else {
-        const cusps = Array.from(new Float64Array(exports.memory.buffer, cuspsPtr, 13)).slice(1);
-        const ascmc = new Float64Array(exports.memory.buffer, ascmcPtr, 10);
-        houses = { cusps, system: input.system };
-        angles = { ascendant: ascmc[0] as number, midheaven: ascmc[1] as number };
-      }
-    } finally {
-      exports.free(cuspsPtr);
-      exports.free(ascmcPtr);
+    const result = computeHouses(
+      exports,
+      jd,
+      input.latitude,
+      input.longitude,
+      input.system,
+      input.zodiac === "sidereal",
+    );
+    if (!result) {
+      warnings.push(`house system ${input.system} infeasible at this latitude — houses omitted`);
+    } else {
+      houses = { cusps: result.cusps, system: input.system };
+      angles = { ascendant: result.basic.ascendant, midheaven: result.basic.midheaven };
     }
   }
 

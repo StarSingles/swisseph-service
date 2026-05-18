@@ -1,4 +1,6 @@
 import { Hono } from "hono";
+import { computeHouses } from "../ephemeris/houses";
+import { applySiderealMode, ayanamsaToSidMode } from "../ephemeris/sidereal";
 import { loadSwissEph } from "../ephemeris/wasm-loader";
 import { jsonError } from "../errors";
 import { HousesInput } from "../schemas/birth-data";
@@ -11,33 +13,27 @@ housesRoute.post("/", async (c) => {
   if (!parsed.success) {
     return jsonError(c, "invalid_input", "Invalid input", parsed.error.flatten());
   }
-  const { jd, latitude, longitude, system } = parsed.data;
+  const { jd, latitude, longitude, system, includeExtended, zodiac, ayanamsa } = parsed.data;
   const { exports } = await loadSwissEph();
 
-  const cuspsPtr = exports.malloc(13 * 8); // cusps[0..12], cusps[0] unused
-  const ascmcPtr = exports.malloc(10 * 8);
-  try {
-    const rc = exports.swe_houses(
-      jd,
-      latitude,
-      longitude,
-      system.charCodeAt(0),
-      cuspsPtr,
-      ascmcPtr,
-    );
-    if (rc < 0) {
-      return jsonError(c, "infeasible", `swe_houses failed at lat=${latitude}, system=${system}`);
-    }
-    const cusps = Array.from(new Float64Array(exports.memory.buffer, cuspsPtr, 13)).slice(1);
-    const ascmc = new Float64Array(exports.memory.buffer, ascmcPtr, 10);
-    return c.json({
-      cusps,
-      ascendant: ascmc[0] as number,
-      midheaven: ascmc[1] as number,
-      system,
-    });
-  } finally {
-    exports.free(cuspsPtr);
-    exports.free(ascmcPtr);
+  if (zodiac === "sidereal" && ayanamsa) {
+    // Sticky global state — set mode every sidereal call. See sidereal.ts.
+    applySiderealMode(exports, ayanamsaToSidMode(ayanamsa));
   }
+
+  const result = computeHouses(exports, jd, latitude, longitude, system, zodiac === "sidereal");
+  if (!result) {
+    return jsonError(c, "infeasible", `swe_houses_ex failed at lat=${latitude}, system=${system}`);
+  }
+
+  const response: Record<string, unknown> = {
+    cusps: result.cusps,
+    ascendant: result.basic.ascendant,
+    midheaven: result.basic.midheaven,
+    system,
+  };
+  if (includeExtended) {
+    response.extendedAngles = result.extended;
+  }
+  return c.json(response);
 });

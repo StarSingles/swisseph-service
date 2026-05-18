@@ -6,6 +6,7 @@ import diana from "./fixtures/diana.json";
 import einstein from "./fixtures/einstein.json";
 import extendedBodiesJ2000 from "./fixtures/extended-bodies-j2000.json";
 import greenwich from "./fixtures/greenwich-2000.json";
+import housesExtendedNyc from "./fixtures/houses-extended-nyc.json";
 import polar from "./fixtures/polar.json";
 import reykjavik from "./fixtures/reykjavik.json";
 import sydney from "./fixtures/sydney.json";
@@ -99,4 +100,55 @@ describe("golden output fixtures — extended bodies at J2000", () => {
       expect(data.sign).toBe(expected.sign);
     });
   }
+});
+
+describe("golden output fixtures — houses extended NYC J2000", () => {
+  const { _meta, ascendant, midheaven, cusps, extendedAngles } = housesExtendedNyc;
+  const TOLERANCE = _meta.tolerance;
+  const DECIMAL_PLACES = Math.log10(1 / TOLERANCE);
+
+  it("ascendant and midheaven match golden values", async () => {
+    const res = await post("/api/v1/houses", {
+      jd: _meta.jd,
+      latitude: _meta.latitude,
+      longitude: _meta.longitude,
+      system: _meta.system,
+      includeExtended: true,
+    });
+    expect(res.status).toBe(200);
+    const data = await res.json<{
+      ascendant: number;
+      midheaven: number;
+      cusps: number[];
+      extendedAngles: {
+        vertex: number;
+        equatorialAscendant: number;
+        coAscendantKoch: number;
+        coAscendantMunkasey: number;
+        polarAscendant: number;
+      };
+    }>();
+    expect(data.ascendant).toBeCloseTo(ascendant, DECIMAL_PLACES);
+    expect(data.midheaven).toBeCloseTo(midheaven, DECIMAL_PLACES);
+    for (let i = 0; i < cusps.length; i++) {
+      expect(data.cusps[i]).toBeCloseTo(cusps[i] as number, DECIMAL_PLACES);
+    }
+    expect(data.extendedAngles.vertex).toBeCloseTo(extendedAngles.vertex, DECIMAL_PLACES);
+    expect(data.extendedAngles.equatorialAscendant).toBeCloseTo(
+      extendedAngles.equatorialAscendant,
+      DECIMAL_PLACES,
+    );
+    expect(data.extendedAngles.coAscendantKoch).toBeCloseTo(
+      extendedAngles.coAscendantKoch,
+      DECIMAL_PLACES,
+    );
+    expect(data.extendedAngles.coAscendantMunkasey).toBeCloseTo(
+      extendedAngles.coAscendantMunkasey,
+      DECIMAL_PLACES,
+    );
+    expect(data.extendedAngles.polarAscendant).toBeCloseTo(
+      extendedAngles.polarAscendant,
+      DECIMAL_PLACES,
+    );
+  });
 });
