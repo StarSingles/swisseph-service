@@ -1,5 +1,6 @@
 import { Hono } from "hono";
-import { BODY_TO_IPL, SEFLG_MOSEPH, SEFLG_SPEED } from "../ephemeris/swe-constants";
+import { applySiderealMode, ayanamsaToSidMode } from "../ephemeris/sidereal";
+import { BODY_TO_IPL, SEFLG_MOSEPH, SEFLG_SIDEREAL, SEFLG_SPEED } from "../ephemeris/swe-constants";
 import { loadSwissEph } from "../ephemeris/wasm-loader";
 import { longitudeToSign } from "../ephemeris/zodiac";
 import { jsonError } from "../errors";
@@ -8,7 +9,7 @@ import type { PlanetPosition } from "../schemas/responses";
 
 // Moshier (analytical) — no ephemeris files needed, accuracy ~0.1" for Sun, ~1" for Moon.
 // Required because the WASM build has no filesystem access for SE1 ephemeris files.
-const FLAGS = SEFLG_SPEED | SEFLG_MOSEPH;
+const BASE_FLAGS = SEFLG_SPEED | SEFLG_MOSEPH;
 
 export const planetPositionRoute = new Hono();
 
@@ -18,13 +19,20 @@ planetPositionRoute.post("/", async (c) => {
   if (!parsed.success) {
     return jsonError(c, "invalid_input", "Invalid input", parsed.error.flatten());
   }
-  const { jd, body } = parsed.data;
+  const { jd, body, zodiac, ayanamsa } = parsed.data;
   const { exports } = await loadSwissEph();
+
+  let flags = BASE_FLAGS;
+  if (zodiac === "sidereal" && ayanamsa) {
+    // Sticky global state: set mode every sidereal call. See sidereal.ts.
+    applySiderealMode(exports, ayanamsaToSidMode(ayanamsa));
+    flags |= SEFLG_SIDEREAL;
+  }
 
   const xx = exports.malloc(6 * 8); // 6 doubles
   const serr = exports.malloc(256);
   try {
-    const rc = exports.swe_calc_ut(jd, BODY_TO_IPL[body], FLAGS, xx, serr);
+    const rc = exports.swe_calc_ut(jd, BODY_TO_IPL[body], flags, xx, serr);
     if (rc < 0) {
       const msg = readCString(exports.memory, serr);
       return jsonError(c, "wasm_error", `swe_calc_ut failed: ${msg}`);

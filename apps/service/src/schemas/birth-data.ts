@@ -1,5 +1,20 @@
 import { z } from "zod";
 
+export const Ayanamsa = z.enum([
+  "lahiri",
+  "fagan_bradley",
+  "krishnamurti",
+  "raman",
+  "deluce",
+  "djwhal_khul",
+]);
+export type Ayanamsa = z.infer<typeof Ayanamsa>;
+
+const zodiacFields = {
+  zodiac: z.enum(["tropical", "sidereal"]).default("tropical"),
+  ayanamsa: Ayanamsa.optional(),
+};
+
 export const JulianDayInput = z.object({
   year: z.number().int().min(-4000).max(4000),
   month: z.number().int().min(1).max(12),
@@ -27,10 +42,16 @@ export const PlanetBody = z.enum([
 ]);
 export type PlanetBody = z.infer<typeof PlanetBody>;
 
-export const PlanetPositionInput = z.object({
-  jd: z.number(),
-  body: PlanetBody,
-});
+export const PlanetPositionInput = z
+  .object({
+    jd: z.number(),
+    body: PlanetBody,
+    ...zodiacFields,
+  })
+  .refine((v) => v.zodiac !== "sidereal" || v.ayanamsa !== undefined, {
+    message: "ayanamsa is required when zodiac is 'sidereal'",
+    path: ["ayanamsa"],
+  });
 export type PlanetPositionInput = z.infer<typeof PlanetPositionInput>;
 
 export const HouseSystem = z.enum(["P", "K", "O", "R", "C", "E", "W", "B"]).default("P");
@@ -44,21 +65,27 @@ export const HousesInput = z.object({
 });
 export type HousesInput = z.infer<typeof HousesInput>;
 
-export const BirthData = z.object({
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  time: z
-    .string()
-    .regex(/^\d{2}:\d{2}(:\d{2})?$/)
-    .optional(),
-  latitude: z.number().min(-90).max(90),
-  longitude: z.number().min(-180).max(180),
-  system: HouseSystem.default("P"),
-  /**
-   * Optional opt-in body list. Defaults to the classical 10 (Sun→Pluto)
-   * when omitted. When provided, returns exactly these bodies in order.
-   */
-  bodies: z.array(PlanetBody).optional(),
-});
+export const BirthData = z
+  .object({
+    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    time: z
+      .string()
+      .regex(/^\d{2}:\d{2}(:\d{2})?$/)
+      .optional(),
+    latitude: z.number().min(-90).max(90),
+    longitude: z.number().min(-180).max(180),
+    system: HouseSystem.default("P"),
+    /**
+     * Optional opt-in body list. Defaults to the classical 10 (Sun→Pluto)
+     * when omitted. When provided, returns exactly these bodies in order.
+     */
+    bodies: z.array(PlanetBody).optional(),
+    ...zodiacFields,
+  })
+  .refine((v) => v.zodiac !== "sidereal" || v.ayanamsa !== undefined, {
+    message: "ayanamsa is required when zodiac is 'sidereal'",
+    path: ["ayanamsa"],
+  });
 export type BirthData = z.infer<typeof BirthData>;
 
 export const AspectType = z.enum(["conjunction", "sextile", "square", "trine", "opposition"]);

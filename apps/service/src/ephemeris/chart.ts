@@ -1,6 +1,13 @@
 import type { BirthData, PlanetBody } from "../schemas/birth-data";
 import type { PlanetPosition } from "../schemas/responses";
-import { BODY_TO_IPL, SE_GREG_CAL, SEFLG_MOSEPH, SEFLG_SPEED } from "./swe-constants";
+import { applySiderealMode, ayanamsaToSidMode } from "./sidereal";
+import {
+  BODY_TO_IPL,
+  SE_GREG_CAL,
+  SEFLG_MOSEPH,
+  SEFLG_SIDEREAL,
+  SEFLG_SPEED,
+} from "./swe-constants";
 import { loadSwissEph } from "./wasm-loader";
 import { longitudeToSign } from "./zodiac";
 
@@ -38,6 +45,13 @@ export async function computeBirthChart(input: BirthData): Promise<ComputedBirth
   const hour = hasTime ? parseHourFraction(input.time as string) : 12; // noon fallback for body positions only
   const jd = exports.swe_julday(year, month, day, hour, SE_GREG_CAL);
 
+  let flags = FLAGS;
+  if (input.zodiac === "sidereal" && input.ayanamsa) {
+    // Sticky global state: set mode every sidereal call. See sidereal.ts.
+    applySiderealMode(exports, ayanamsaToSidMode(input.ayanamsa));
+    flags |= SEFLG_SIDEREAL;
+  }
+
   const requestedBodies = input.bodies ?? DEFAULT_BODIES;
   const bodies: PlanetPosition[] = [];
   const xx = exports.malloc(6 * 8);
@@ -45,7 +59,7 @@ export async function computeBirthChart(input: BirthData): Promise<ComputedBirth
   try {
     for (const name of requestedBodies) {
       const ipl = BODY_TO_IPL[name];
-      const rc = exports.swe_calc_ut(jd, ipl, FLAGS, xx, serr);
+      const rc = exports.swe_calc_ut(jd, ipl, flags, xx, serr);
       if (rc < 0) throw new Error(`swe_calc_ut failed for ${name}`);
       const f64 = new Float64Array(exports.memory.buffer, xx, 6);
       const longitude = f64[0] as number;
@@ -75,6 +89,7 @@ export async function computeBirthChart(input: BirthData): Promise<ComputedBirth
     const cuspsPtr = exports.malloc(13 * 8);
     const ascmcPtr = exports.malloc(10 * 8);
     try {
+      // TODO(task-7): cusps are still tropical here; switch to swe_houses_ex in Task 7.
       const rc = exports.swe_houses(
         jd,
         input.latitude,
