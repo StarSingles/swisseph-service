@@ -56,12 +56,7 @@ export interface SwissEphExports {
    * swe_get_ayanamsa_ex_ut(tjd_ut: f64, iflag: i32, daya: ptr, serr: ptr) -> i32
    * Writes ayanamsa offset (degrees) into *daya. Call swe_set_sid_mode first.
    */
-  swe_get_ayanamsa_ex_ut(
-    tjd_ut: number,
-    iflag: number,
-    daya: number,
-    serr: number,
-  ): number;
+  swe_get_ayanamsa_ex_ut(tjd_ut: number, iflag: number, daya: number, serr: number): number;
 
   /** swe_set_ephe_path(path: ptr) -> void */
   swe_set_ephe_path(path: number): void;
